@@ -1,4 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase/config";
 import { useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -8,6 +10,14 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const naviagtion = useNavigation();
+
+  const onHandleLogin = () => {
+    if (email !== "" && password !== "") {
+      signInWithEmailAndPassword(auth, email, password).then(() => {
+        console.log("Login successfull");
+      });
+    }
+  };
   return (
     <KeyboardAwareScrollView className="bg-black">
       <View>
@@ -39,17 +49,21 @@ const LoginScreen = () => {
             onChangeText={(text) => setPassword(text)}
           ></TextInput>
         </View>
-        <TouchableOpacity className="bg-[#fac25a] py-2 rounded-md mx-10 mt-16 mb-3">
-          <Text className="text-center font-semibold text-white text-lg">Login</Text>
+        <TouchableOpacity
+          onPress={onHandleLogin}
+          className="bg-[#fac25a] py-2 rounded-md mx-10 mt-16 mb-3"
+        >
+          <Text className="text-center font-semibold text-white text-lg">
+            Login
+          </Text>
         </TouchableOpacity>
         <View className="flex-row space-x-2 justify-center">
           <Text>Dont have an account?</Text>
-          <TouchableOpacity onPress={() => naviagtion.navigate("Register")}> 
-            <Text className="text-[#d60e45] font-medium">{" "} Sign up</Text>
+          <TouchableOpacity onPress={() => naviagtion.navigate("Register")}>
+            <Text className="text-[#d60e45] font-medium"> Sign up</Text>
           </TouchableOpacity>
         </View>
       </View>
-
     </KeyboardAwareScrollView>
   );
 };

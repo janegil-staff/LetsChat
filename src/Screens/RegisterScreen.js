@@ -1,6 +1,11 @@
+
+import {auth} from "../../firebase/config";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, Image, TextInput, TouchableOpacity, Alert } from "react-native";
+
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 const backImage = require("../../assets/background_signin.jpg");
 
@@ -9,6 +14,18 @@ const RegisterScreen = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const naviagtion = useNavigation();
+
+  const onHandleRegister = () => {
+    if (email !== "" && password !== "" && confirmPassword !== "") {
+      if (password !== confirmPassword) {
+        Alert.alert("Password does not match");
+      } else {
+        createUserWithEmailAndPassword(auth, email, password).then(() => {
+          console.log("User created successfully");
+        });
+      }
+    }
+  };
 
   return (
     <KeyboardAwareScrollView className="bg-black">
@@ -52,7 +69,10 @@ const RegisterScreen = () => {
             onChangeText={(text) => setConfirmPassword(text)}
           ></TextInput>
         </View>
-        <TouchableOpacity className="bg-[#fac25a] py-2 rounded-md mx-10 mt-16 mb-3">
+        <TouchableOpacity
+          onPress={onHandleRegister}
+          className="bg-[#fac25a] py-2 rounded-md mx-10 mt-16 mb-3"
+        >
           <Text className="text-center font-semibold text-white text-lg">
             Register
           </Text>
@@ -60,7 +80,7 @@ const RegisterScreen = () => {
         <View className="flex-row space-x-2 justify-center">
           <Text>Already have an account ?</Text>
           <TouchableOpacity onPress={() => naviagtion.navigate("Login")}>
-            <Text className="text-[#d60e45] font-medium">Sign in</Text>
+            <Text className="text-[#d60e45] font-medium"> Sign in</Text>
           </TouchableOpacity>
         </View>
       </View>
