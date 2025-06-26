@@ -4,7 +4,7 @@ import { auth } from "../../firebase/config";
 import { useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-const backImage = require("../../assets/background_signin.jpg");
+const backImage = require("../../assets/images/landing.png");
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -13,9 +13,13 @@ const LoginScreen = () => {
 
   const onHandleLogin = () => {
     if (email !== "" && password !== "") {
-      signInWithEmailAndPassword(auth, email, password).then(() => {
-        console.log("Login successfull");
-      });
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          console.log("Signed in:", userCredential.user);
+        })
+        .catch((error) => {
+          console.error("Login error:", error.code, error.message);
+        });
     }
   };
   return (
@@ -23,7 +27,7 @@ const LoginScreen = () => {
       <View>
         <Image source={backImage} className="object-cover h-80 w-full" />
       </View>
-      <View className="bg-white h-screen round-t-3xl">
+      <View className="bg-white h-screen">
         <Text className="text-[#d60e45] text-3xl font-semibold text-center py-3 mt-3">
           Sign in
         </Text>

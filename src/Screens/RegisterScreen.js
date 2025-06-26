@@ -1,13 +1,20 @@
-
-import {auth} from "../../firebase/config";
+import { auth, db } from "../../firebase/config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { View, Text, Image, TextInput, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-const backImage = require("../../assets/background_signin.jpg");
+import { addDoc, collection } from "firebase/firestore";
+const backImage = require("../../assets/images/landing2.png");
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
@@ -20,9 +27,18 @@ const RegisterScreen = () => {
       if (password !== confirmPassword) {
         Alert.alert("Password does not match");
       } else {
-        createUserWithEmailAndPassword(auth, email, password).then(() => {
-          console.log("User created successfully");
-        });
+        createUserWithEmailAndPassword(auth, email, password)
+          .then(async (res) => {
+            console.log("Result - ", res);
+            await addDoc(collection(db, "users"), {
+              email: res.user.email,
+              username: res.user.email.split("@")[0],
+            });
+            console.log("User created succssfully");
+          })
+          .catch((error) => {
+            console.error("Signup error:", error.code, error.message);
+          });
       }
     }
   };
@@ -32,7 +48,7 @@ const RegisterScreen = () => {
       <View>
         <Image source={backImage} className="object-cover h-80 w-full" />
       </View>
-      <View className="bg-white h-screen round-t-3xl">
+      <View className="bg-white h-screen">
         <Text className="text-[#d60e45] text-3xl font-semibold text-center py-3 mt-3">
           Sign up
         </Text>
